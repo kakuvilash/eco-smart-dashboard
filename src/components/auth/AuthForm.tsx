@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Lock, Mail, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 type AuthFormProps = {
   onSuccess: () => void;
@@ -15,19 +16,44 @@ type AuthFormProps = {
 const AuthForm = ({ onSuccess }: AuthFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    location: ""
+  });
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
   
   // Mock auth function - would connect to actual auth service in production
-  const handleAuth = (formData: FormData, isSignIn: boolean) => {
+  const handleAuth = (e: React.FormEvent, isSignIn: boolean) => {
+    e.preventDefault();
     setIsLoading(true);
     
     // Simulate API request
     setTimeout(() => {
       setIsLoading(false);
+      
+      // Save authentication state to localStorage (in a real app, this would use proper auth tokens)
+      localStorage.setItem("isAuthenticated", "true");
+      
       onSuccess();
+      
       toast({
         title: isSignIn ? "Welcome back!" : "Account created successfully!",
         description: "You are now signed in to the Smart Waste Management System.",
       });
+      
+      // Redirect to dashboard after successful authentication
+      navigate("/dashboard");
     }, 1500);
   };
 
@@ -52,17 +78,21 @@ const AuthForm = ({ onSuccess }: AuthFormProps) => {
           </CardHeader>
           
           <TabsContent value="signin">
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              handleAuth(formData, true);
-            }}>
+            <form onSubmit={(e) => handleAuth(e, true)}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="email" type="email" placeholder="m@example.com" className="pl-10" required />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="m@example.com" 
+                      className="pl-10" 
+                      required 
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -74,7 +104,14 @@ const AuthForm = ({ onSuccess }: AuthFormProps) => {
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="password" type="password" className="pl-10" required />
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      className="pl-10" 
+                      required 
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -87,38 +124,62 @@ const AuthForm = ({ onSuccess }: AuthFormProps) => {
           </TabsContent>
           
           <TabsContent value="signup">
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              handleAuth(formData, false);
-            }}>
+            <form onSubmit={(e) => handleAuth(e, false)}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="name" placeholder="John Doe" className="pl-10" required />
+                    <Input 
+                      id="name" 
+                      placeholder="John Doe" 
+                      className="pl-10" 
+                      required 
+                      value={formData.name}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="email" type="email" placeholder="m@example.com" className="pl-10" required />
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="m@example.com" 
+                      className="pl-10" 
+                      required 
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="password" type="password" className="pl-10" required />
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      className="pl-10" 
+                      required 
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="location">Location (Optional)</Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="location" placeholder="City, Country" className="pl-10" />
+                    <Input 
+                      id="location" 
+                      placeholder="City, Country" 
+                      className="pl-10" 
+                      value={formData.location}
+                      onChange={handleInputChange}
+                    />
                   </div>
                 </div>
               </CardContent>

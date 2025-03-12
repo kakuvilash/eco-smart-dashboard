@@ -1,9 +1,12 @@
+
 import { ReactNode, useState } from "react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Calendar, ChevronRight, HelpCircle, Home, LogOut, MapPin, PieChart, Recycle, Settings, Trash2 } from "lucide-react";
+import { Bell, Calendar, ChevronRight, HelpCircle, Home, MapPin, PieChart, Recycle, Settings, Trash2 } from "lucide-react";
+import { SignOutButton } from "@/components/auth/AuthButtons";
+import { Link, useLocation } from "react-router-dom";
 
 type MainLayoutProps = {
   children: ReactNode;
@@ -11,18 +14,18 @@ type MainLayoutProps = {
 
 const AppLayout = ({ children }: MainLayoutProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation();
   
   const menuItems = [
-    { icon: Home, label: "Dashboard", href: "/dashboard", active: true },
-    { icon: MapPin, label: "Bin Locations", href: "/locations" },
-    { icon: Calendar, label: "Collection Schedule", href: "/schedule" },
-    { icon: PieChart, label: "Analytics", href: "/analytics" },
-    { icon: Settings, label: "Settings", href: "/settings" },
+    { icon: Home, label: "Dashboard", href: "/dashboard", active: location.pathname === "/dashboard" },
+    { icon: MapPin, label: "Bin Locations", href: "/locations", active: location.pathname === "/locations" },
+    { icon: Calendar, label: "Collection Schedule", href: "/schedule", active: location.pathname === "/schedule" },
+    { icon: PieChart, label: "Analytics", href: "/analytics", active: location.pathname === "/analytics" },
+    { icon: Settings, label: "Settings", href: "/settings", active: location.pathname === "/settings" },
   ];
 
   const footerItems = [
-    { icon: HelpCircle, label: "Help & Support", href: "/support" },
-    { icon: LogOut, label: "Sign Out", href: "/logout" },
+    { icon: HelpCircle, label: "Help & Support", href: "/support", active: location.pathname === "/support" },
   ];
 
   return (
@@ -47,10 +50,10 @@ const AppLayout = ({ children }: MainLayoutProps) => {
                         className={`w-full justify-start ${item.active ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"}`}
                         asChild
                       >
-                        <a href={item.href} className="flex items-center">
+                        <Link to={item.href} className="flex items-center">
                           <item.icon className="h-4 w-4" />
                           {!isCollapsed && <span className="ml-2">{item.label}</span>}
-                        </a>
+                        </Link>
                       </Button>
                     </TooltipTrigger>
                     {isCollapsed && (
@@ -105,10 +108,10 @@ const AppLayout = ({ children }: MainLayoutProps) => {
                         className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                         asChild
                       >
-                        <a href={item.href} className="flex items-center">
+                        <Link to={item.href} className="flex items-center">
                           <item.icon className="h-4 w-4" />
                           {!isCollapsed && <span className="ml-2">{item.label}</span>}
-                        </a>
+                        </Link>
                       </Button>
                     </TooltipTrigger>
                     {isCollapsed && (
@@ -119,6 +122,19 @@ const AppLayout = ({ children }: MainLayoutProps) => {
                   </Tooltip>
                 </TooltipProvider>
               ))}
+              
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <SignOutButton />
+                  </TooltipTrigger>
+                  {isCollapsed && (
+                    <TooltipContent side="right">
+                      Sign Out
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             </nav>
           </SidebarFooter>
         </Sidebar>
