@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Lock, Mail, User } from "lucide-react";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 type AuthFormProps = {
   onSuccess: () => void;

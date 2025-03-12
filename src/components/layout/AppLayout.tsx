@@ -1,4 +1,3 @@
-
 import { ReactNode, useState } from "react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ const AppLayout = ({ children }: MainLayoutProps) => {
   ];
 
   return (
-    <SidebarProvider defaultCollapsed={false} onCollapsedChange={setIsCollapsed}>
+    <SidebarProvider>
       <div className="flex h-screen w-full">
         <Sidebar className="border-r">
           <SidebarHeader className="flex h-14 items-center border-b px-4">
